@@ -1,5 +1,3 @@
-const properties = require('./json/properties.json');
-const users = require('./json/users.json');
 const { Pool } = require('pg');
 
 const pool = new Pool({
@@ -33,17 +31,6 @@ const getUserWithEmail = function(email) {
       return null;
     })
     .catch(e => console.log(e));
-
-  // let user;
-  // for (const userId in users) {
-  //   user = users[userId];
-  //   if (user.email.toLowerCase() === email.toLowerCase()) {
-  //     break;
-  //   } else {
-  //     user = null;
-  //   }
-  // }
-  // return Promise.resolve(user);
 }
 exports.getUserWithEmail = getUserWithEmail;
 
@@ -68,7 +55,6 @@ const getUserWithId = function(id) {
       return null;
     })
     .catch(e => console.log(e));
-  // return Promise.resolve(users[id]);
 }
 exports.getUserWithId = getUserWithId;
 
@@ -86,11 +72,8 @@ const addUser =  function(user) {
     RETURNING *;
   `;
   return pool.query(queryString, values)
-    .then(res => res.rows[0]);
-  // const userId = Object.keys(users).length + 1;
-  // user.id = userId;
-  // users[userId] = user;
-  // return Promise.resolve(user);
+    .then(res => res.rows[0])
+    .catch(e => console.log(e));
 }
 exports.addUser = addUser;
 
@@ -102,7 +85,6 @@ exports.addUser = addUser;
  * @return {Promise<[{}]>} A promise to the reservations.
  */
 const getAllReservations = function(guest_id, limit = 10) {
-
   const values = [`${guest_id}`, `${limit}`];
   const queryString = `
     SELECT properties.*, reservations.*, avg(property_reviews.rating) as average_rating
@@ -118,8 +100,6 @@ const getAllReservations = function(guest_id, limit = 10) {
   return pool.query(queryString, values)
     .then(res => res.rows)
     .catch(e => console.log(e));
-
-  // return getAllProperties(null, 2);
 }
 exports.getAllReservations = getAllReservations;
 
@@ -132,8 +112,6 @@ exports.getAllReservations = getAllReservations;
  * @return {Promise<[{}]>}  A promise to the properties.
  */
 const getAllProperties = function(options, limit = 10) {
-  // const limitedProperties = {};
-
   // 1
   const queryParams = [];
   // 2
@@ -232,9 +210,5 @@ const addProperty = function(property) {
   return pool.query(queryString, values)
       .then(res => res.rows[0])
       .catch(e => console.log(e));
-  // const propertyId = Object.keys(properties).length + 1;
-  // property.id = propertyId;
-  // properties[propertyId] = property;
-  // return Promise.resolve(property);
 }
 exports.addProperty = addProperty;
